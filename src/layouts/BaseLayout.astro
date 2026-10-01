@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { SITE_NAME } from '../lib/content';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  image?: string;
+  publishedTime?: string;
+}
+
+const { title, description, type = 'website', image, publishedTime } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const isHome = Astro.url.pathname === '/';
+const documentTitle = isHome ? `${SITE_NAME} · ${title}` : `${title} · ${SITE_NAME}`;
+const ogImage = image ? new URL(image, Astro.site) : undefined;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f4efe6" />
+    <meta name="generator" content={Astro.generator} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ko_KR" />
+    {ogImage ? <meta property="og:image" content={ogImage} /> : null}
+    {publishedTime ? <meta property="article:published_time" content={publishedTime} /> : null}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={documentTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage ? <meta name="twitter:image" content={ogImage} /> : null}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <script is:inline>
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || !('IntersectionObserver' in window)) return;
+        document.documentElement.classList.add('motion');
+        document.addEventListener('DOMContentLoaded', function () {
+          var targets = document.querySelectorAll('[data-reveal]');
+          var siblings = new Map();
+          targets.forEach(function (el) {
+            var index = siblings.get(el.parentElement) || 0;
+            el.style.setProperty('--reveal-index', String(index));
+            siblings.set(el.parentElement, index + 1);
+          });
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is_in');
+                observer.unobserve(entry.target);
+              });
+            },
+            { rootMargin: '0px 0px -8% 0px' },
+          );
+          targets.forEach(function (el) {
+            observer.observe(el);
+          });
+        });
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip_link" href="#main">본문으로 건너뛰기</a>
+    <SiteHeader />
+    <main id="main" class="site_main" tabindex="-1">
+      <div class="site_main_lines" aria-hidden="true"></div>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

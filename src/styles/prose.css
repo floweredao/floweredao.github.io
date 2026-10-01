@@ -1,0 +1,143 @@
+/* 마크다운 본문(<Content />)을 긴 한국어 읽기에 맞춘 스타일. 폭은 --measure, 배경은 불투명 paper(그리드 선 가림). */
+
+.prose {
+  background: var(--paper);
+  font-size: var(--text-body);
+  line-height: var(--leading-prose);
+  max-inline-size: var(--measure);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-5);
+}
+
+.prose h2 {
+  border-block-start: 1px solid var(--rule);
+  font-size: var(--text-title);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+  margin-block-start: var(--space-12);
+  padding-block-start: var(--space-5);
+}
+
+.prose h3 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  margin-block-start: var(--space-8);
+}
+
+.prose h4 {
+  font-size: var(--text-ui);
+  margin-block-start: var(--space-6);
+}
+
+.prose h2 + *,
+.prose h3 + *,
+.prose h4 + * {
+  margin-block-start: var(--space-3);
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+.prose ul,
+.prose ol {
+  padding-inline-start: var(--space-6);
+}
+
+.prose li + li {
+  margin-block-start: var(--space-2);
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin-block-start: var(--space-2);
+}
+
+.prose blockquote {
+  border-inline-start: 1px solid var(--rule);
+  color: var(--ink-dim);
+  padding-inline-start: var(--space-5);
+}
+
+.prose hr {
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+  margin-block: var(--space-12);
+}
+
+.prose img {
+  background: var(--paper-2);
+}
+
+.prose figure {
+  margin-block: var(--space-8);
+}
+
+.prose figcaption {
+  color: var(--ink-dim);
+  font-size: var(--text-small);
+  margin-block-start: var(--space-2);
+}
+
+.prose code {
+  background: var(--paper-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  background: var(--paper-2);
+  font-size: var(--text-small);
+  line-height: var(--leading-ui);
+  overflow-x: auto;
+  padding: var(--space-5);
+  word-break: normal;
+}
+
+.prose pre code {
+  background: transparent;
+  border-radius: 0;
+  font-size: inherit;
+  padding: 0;
+}
+
+.prose table {
+  border-collapse: collapse;
+  display: block;
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  border-block-end: 1px solid var(--rule);
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  vertical-align: top;
+}
+
+.prose th {
+  font-weight: 700;
+}
+
+.prose kbd {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.05em 0.35em;
+}

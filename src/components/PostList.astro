@@ -1,0 +1,97 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import { postHref, type Post } from '../lib/content';
+
+interface Props {
+  posts: Post[];
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { posts, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<ul class="post_list">
+  {posts.map((post) => (
+    <li class="post_list_item" data-reveal>
+      <p class="post_list_date"><FormattedDate date={post.data.date} /></p>
+      <div class="post_list_body">
+        <Heading class="post_list_title">
+          <a class="post_list_link" href={postHref(post.id)}>{post.data.title}</a>
+        </Heading>
+        <p class="post_list_desc">{post.data.description}</p>
+        {post.data.tags?.length ? (
+          <ul class="post_list_tags" aria-label="태그">
+            {post.data.tags.map((tag) => <li>{tag}</li>)}
+          </ul>
+        ) : null}
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .post_list {
+    list-style: none;
+  }
+
+  .post_list_item {
+    border-block-start: 1px solid var(--rule);
+    display: grid;
+    gap: var(--space-2) var(--space-8);
+    padding-block: var(--space-6);
+  }
+
+  .post_list_date {
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+    line-height: var(--leading-title);
+    padding-block-start: 0.35em;
+  }
+
+  .post_list_body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .post_list_title {
+    font-size: var(--text-title);
+    letter-spacing: var(--tracking-title);
+    line-height: var(--leading-title);
+  }
+
+  .post_list_link {
+    text-decoration: none;
+  }
+
+  .post_list_link:hover {
+    text-decoration: underline;
+  }
+
+  .post_list_desc {
+    color: var(--ink-dim);
+    max-inline-size: var(--measure);
+  }
+
+  .post_list_tags {
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    gap: var(--space-3);
+    list-style: none;
+    margin-block-start: var(--space-1);
+  }
+
+  .post_list_tags li::before {
+    content: '#';
+  }
+
+  @media (min-width: 48rem) {
+    .post_list_item {
+      grid-template-columns: minmax(9rem, 11rem) 1fr;
+    }
+  }
+</style>

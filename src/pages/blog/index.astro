@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts, SITE_NAME } from '../../lib/content';
+
+const posts = await getPosts();
+const description = `${SITE_NAME}가 쓴 글의 목록입니다. 최신 글이 위에 옵니다.`;
+---
+
+<BaseLayout title="블로그" description={description}>
+  <div class="page container">
+    <PageHeader eyebrow="Blog" title="블로그" intro="만든 것과 생각한 것을 글로 남깁니다. 최신 글이 위에 옵니다." />
+    {posts.length ? (
+      <PostList posts={posts} headingLevel="h2" />
+    ) : (
+      <p class="empty_note">아직 올라온 글이 없습니다.</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+</style>

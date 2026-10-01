@@ -1,0 +1,36 @@
+---
+interface Props {
+  items: { term: string; detail: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<dl class="meta_list">
+  {items.map(({ term, detail }) => (
+    <div class="meta_list_item">
+      <dt class="meta_list_term">{term}</dt>
+      <dd class="meta_list_detail">{detail}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .meta_list {
+    border-block-start: 1px solid var(--rule);
+    display: grid;
+    gap: var(--space-4) var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+    padding-block-start: var(--space-4);
+  }
+
+  .meta_list_term {
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+  }
+
+  .meta_list_detail {
+    font-weight: 500;
+    margin-block-start: var(--space-1);
+  }
+</style>

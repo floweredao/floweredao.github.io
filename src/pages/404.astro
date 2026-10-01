@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<BaseLayout title="페이지를 찾을 수 없습니다" description="요청하신 주소에 해당하는 페이지가 없습니다.">
+  <meta name="robots" content="noindex" slot="head" />
+  <div class="not_found container">
+    <PageHeader
+      eyebrow="404"
+      title="페이지를 찾을 수 없습니다"
+      intro="주소가 바뀌었거나 삭제된 페이지입니다. 아래 링크에서 다시 시작해 주세요."
+    />
+    <ul class="not_found_links">
+      <li><a href="/">홈으로<span aria-hidden="true"> →</span></a></li>
+      <li><a href="/blog/">블로그<span aria-hidden="true"> →</span></a></li>
+      <li><a href="/portfolio/">포트폴리오<span aria-hidden="true"> →</span></a></li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .not_found {
+    padding-block-end: var(--space-24);
+  }
+
+  .not_found_links {
+    border-block-start: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    list-style: none;
+    padding-block-start: var(--space-6);
+  }
+
+  .not_found_links a {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .not_found_links a:hover {
+    text-decoration: underline;
+  }
+</style>

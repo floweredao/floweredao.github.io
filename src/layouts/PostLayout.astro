@@ -1,0 +1,133 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import PrevNext from '../components/PrevNext.astro';
+import TagList from '../components/TagList.astro';
+import { isoDate, postHref, SITE_NAME, type Post } from '../lib/content';
+
+interface Props {
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
+const { title, description, date, tags } = post.data;
+const published = isoDate(date);
+const neighbor = (target?: Post) =>
+  target ? { href: postHref(target.id), title: target.data.title } : undefined;
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: published,
+  inLanguage: 'ko',
+  author: { '@type': 'Person', name: SITE_NAME },
+  mainEntityOfPage: new URL(postHref(post.id), Astro.site).href,
+});
+---
+
+<BaseLayout title={title} description={description} type="article" publishedTime={published}>
+  <script is:inline type="application/ld+json" set:html={structuredData} slot="head" />
+  <article class="post container">
+    <header class="post_header">
+      <Eyebrow data-reveal>Blog</Eyebrow>
+      <h1 class="post_title" data-reveal>{title}</h1>
+      <p class="post_desc" data-reveal>{description}</p>
+    </header>
+    <div class="post_layout">
+      <aside class="post_aside">
+        <p class="post_aside_label">작성일</p>
+        <p class="post_date"><FormattedDate date={date} /></p>
+        {tags?.length ? (
+          <>
+            <p class="post_aside_label">태그</p>
+            <TagList items={tags} label="태그" />
+          </>
+        ) : null}
+      </aside>
+      <div class="prose post_body">
+        <slot />
+      </div>
+    </div>
+    <PrevNext
+      prev={neighbor(older)}
+      next={neighbor(newer)}
+      prevLabel="이전 글"
+      nextLabel="다음 글"
+      back={{ href: '/blog/', title: '블로그 목록으로' }}
+    />
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    padding-block: var(--space-12) var(--space-20);
+  }
+
+  .post_title {
+    font-family: var(--font-display);
+    font-size: var(--text-headline);
+    font-weight: 800;
+    letter-spacing: var(--tracking-headline);
+    line-height: var(--leading-headline);
+    margin-block-start: var(--space-5);
+    max-inline-size: 20ch;
+  }
+
+  .post_desc {
+    color: var(--ink-dim);
+    font-size: var(--text-lead);
+    margin-block-start: var(--space-6);
+    max-inline-size: var(--measure-narrow);
+  }
+
+  .post_layout {
+    border-block-start: 1px solid var(--rule);
+    display: grid;
+    gap: var(--space-8);
+    margin-block-start: var(--space-10);
+    padding-block-start: var(--space-8);
+  }
+
+  .post_aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .post_aside_label {
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+  }
+
+  .post_aside_label + .post_aside_label,
+  .post_date + .post_aside_label {
+    margin-block-start: var(--space-4);
+  }
+
+  .post_date {
+    font-weight: 500;
+  }
+
+  @media (min-width: 64rem) {
+    .post_layout {
+      column-gap: 0;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .post_aside {
+      align-self: start;
+      grid-column: 1 / 4;
+      inset-block-start: var(--space-6);
+      padding-inline-end: var(--space-6);
+      position: sticky;
+    }
+
+    .post_body {
+      grid-column: 4 / 13;
+    }
+  }
+</style>

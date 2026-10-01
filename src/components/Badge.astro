@@ -1,0 +1,38 @@
+---
+interface Props {
+  visibility: 'public' | 'private';
+}
+
+const { visibility } = Astro.props;
+const label = visibility === 'public' ? '공개 저장소' : '비공개 프로젝트';
+---
+
+<span class="badge" data-visibility={visibility}>{label}</span>
+
+<style>
+  .badge {
+    align-items: center;
+    color: var(--ink-dim);
+    display: inline-flex;
+    font-size: var(--text-small);
+    font-weight: 500;
+    gap: var(--space-2);
+    line-height: var(--leading-small);
+  }
+
+  .badge::before {
+    block-size: 0.5em;
+    border: 1px solid var(--ink-dim);
+    content: '';
+    inline-size: 0.5em;
+  }
+
+  .badge[data-visibility='public'] {
+    color: var(--ink);
+  }
+
+  .badge[data-visibility='public']::before {
+    background: var(--spot);
+    border-color: var(--spot);
+  }
+</style>

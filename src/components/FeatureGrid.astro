@@ -1,0 +1,50 @@
+---
+interface Props {
+  features: { title: string; body: string }[];
+}
+
+const { features } = Astro.props;
+---
+
+<ol class="feature_grid" role="list">
+  {features.map((feature, index) => (
+    <li class="feature_grid_item">
+      <span class="feature_grid_index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+      <h3 class="feature_grid_title">{feature.title}</h3>
+      <p class="feature_grid_body">{feature.body}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .feature_grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    list-style: none;
+  }
+
+  .feature_grid_item {
+    background: var(--paper-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+  }
+
+  .feature_grid_index {
+    color: var(--ink-dim);
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .feature_grid_title {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+  }
+
+  .feature_grid_body {
+    color: var(--ink-dim);
+  }
+</style>

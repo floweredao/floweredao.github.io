@@ -1,0 +1,31 @@
+/* 등장 모션. 숨김 상태는 html.motion 뒤에만 존재한다.
+   .motion은 BaseLayout의 인라인 스크립트가 JS 실행 + prefers-reduced-motion: no-preference일 때만 붙인다.
+   → JS가 없거나 동작 줄이기가 켜져 있으면 모든 글이 처음부터 보인다. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity var(--dur-enter) var(--ease-out),
+    transform var(--dur-enter) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * var(--stagger));
+}
+
+.motion [data-reveal].is_in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,165 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Button from '../components/Button.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import Gallery from '../components/Gallery.astro';
+import MetaList from '../components/MetaList.astro';
+import PrevNext from '../components/PrevNext.astro';
+import SectionHead from '../components/SectionHead.astro';
+import TagList from '../components/TagList.astro';
+import { imageSize } from '../lib/image-size';
+import { workHref, type Work } from '../lib/content';
+
+interface Props {
+  work: Work;
+  prev?: Work;
+  next?: Work;
+}
+
+const { work, prev, next } = Astro.props;
+const { title, tagline, summary, audience, platform, year, visibility, stack, links, cover, features, gallery } =
+  work.data;
+const isPublic = visibility === 'public';
+const visibilityLabel = isPublic ? '공개 저장소' : '비공개 프로젝트';
+const showLinks = isPublic && links.length > 0;
+const coverSize = await imageSize(cover.src);
+const meta = [
+  { term: '대상', detail: audience },
+  { term: '플랫폼', detail: platform },
+  { term: '연도', detail: year },
+  { term: '공개 여부', detail: visibilityLabel },
+];
+const neighbor = (target?: Work) =>
+  target ? { href: workHref(target.id), title: target.data.title } : undefined;
+---
+
+<BaseLayout title={title} description={summary} image={cover.src}>
+  <article class="work container">
+    <header class="work_header">
+      <Eyebrow data-reveal>Works / {year}</Eyebrow>
+      <h1 class="work_title" data-reveal>{title}</h1>
+      <p class="work_tagline" data-reveal>{tagline}</p>
+      <div class="work_meta" data-reveal>
+        <MetaList items={meta} />
+      </div>
+      {showLinks ? (
+        <ul class="work_links wrap_row" data-reveal>
+          {links.map((link, index) => (
+            <li>
+              <Button href={link.href} variant={index === 0 ? 'primary' : 'secondary'}>
+                {link.label}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {!isPublic ? (
+        <p class="work_private" data-reveal>
+          소스 코드는 공개하지 않는 프로젝트입니다.
+        </p>
+      ) : null}
+    </header>
+
+    <figure class="work_cover">
+      <img
+        src={cover.src}
+        alt={cover.alt}
+        width={coverSize?.width}
+        height={coverSize?.height}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="prose work_body offset_3">
+      <slot />
+    </div>
+
+    {features.length ? (
+      <section class="work_section" aria-labelledby="work-features">
+        <SectionHead eyebrow="Features" title="주요 기능" titleId="work-features" size="h2" />
+        <FeatureGrid features={features} />
+      </section>
+    ) : null}
+
+    {gallery.length ? (
+      <section class="work_section" aria-labelledby="work-screens">
+        <SectionHead eyebrow="Screens" title="화면" titleId="work-screens" size="h2" />
+        <Gallery items={gallery} />
+      </section>
+    ) : null}
+
+    {stack.length ? (
+      <section class="work_section" aria-labelledby="work-stack">
+        <SectionHead eyebrow="Stack" title="사용 기술" titleId="work-stack" size="h2" />
+        <TagList items={stack} label="사용 기술" />
+      </section>
+    ) : null}
+
+    <PrevNext
+      prev={neighbor(prev)}
+      next={neighbor(next)}
+      prevLabel="이전 작업물"
+      nextLabel="다음 작업물"
+      back={{ href: '/portfolio/', title: '포트폴리오 목록으로' }}
+    />
+  </article>
+</BaseLayout>
+
+<style>
+  .work {
+    padding-block: var(--space-12) var(--space-20);
+  }
+
+  .work_title {
+    font-family: var(--font-display);
+    font-size: var(--text-headline);
+    font-weight: 800;
+    letter-spacing: var(--tracking-headline);
+    line-height: var(--leading-headline);
+    margin-block-start: var(--space-5);
+    max-inline-size: 20ch;
+  }
+
+  .work_tagline {
+    font-size: var(--text-lead);
+    margin-block-start: var(--space-5);
+    max-inline-size: var(--measure-narrow);
+  }
+
+  .work_meta {
+    margin-block-start: var(--space-8);
+  }
+
+  .work_links {
+    margin-block-start: var(--space-8);
+  }
+
+  .work_private {
+    color: var(--ink-dim);
+    margin-block-start: var(--space-8);
+  }
+
+  .work_cover {
+    background: var(--paper-2);
+    margin-block-start: var(--space-12);
+  }
+
+  .work_cover img {
+    inline-size: 100%;
+  }
+
+  .work_body {
+    margin-block-start: var(--space-16);
+  }
+
+  .work_section {
+    margin-block-start: var(--space-20);
+  }
+
+  .work_section > :global(.section_head) {
+    margin-block-end: var(--space-8);
+  }
+</style>

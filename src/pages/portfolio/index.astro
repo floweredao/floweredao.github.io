@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getWorks, SITE_NAME } from '../../lib/content';
+
+const works = await getWorks();
+const description = `${SITE_NAME}가 만든 작업물의 목록입니다.`;
+---
+
+<BaseLayout title="포트폴리오" description={description}>
+  <div class="page container">
+    <PageHeader eyebrow="Works" title="포트폴리오" intro="직접 만든 작업물을 모아 둡니다. 각 항목에서 소개, 주요 기능, 화면, 사용 기술을 볼 수 있습니다." />
+    {works.length ? (
+      <ul class="card_grid">
+        {works.map((work, index) => (
+          <li data-reveal>
+            <WorkCard work={work} eager={index < 2} />
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty_note">아직 등록된 작업물이 없습니다.</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+</style>

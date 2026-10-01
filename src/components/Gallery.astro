@@ -1,0 +1,57 @@
+---
+import { imageSize } from '../lib/image-size';
+
+interface Props {
+  items: { src: string; alt: string; caption: string }[];
+}
+
+const { items } = Astro.props;
+const shots = await Promise.all(
+  items.map(async (item) => ({ ...item, size: await imageSize(item.src) })),
+);
+---
+
+<ul class="gallery" role="list">
+  {shots.map((shot) => (
+    <li class="gallery_item">
+      <figure class="gallery_figure">
+        <div class="gallery_frame">
+          <img
+            src={shot.src}
+            alt={shot.alt}
+            width={shot.size?.width}
+            height={shot.size?.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <figcaption class="gallery_caption">{shot.caption}</figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .gallery {
+    display: grid;
+    gap: var(--space-6) var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    list-style: none;
+  }
+
+  .gallery_frame {
+    background: var(--paper-2);
+  }
+
+  .gallery_frame img {
+    inline-size: 100%;
+  }
+
+  .gallery_caption {
+    border-block-start: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+    margin-block-start: var(--space-3);
+    padding-block-start: var(--space-2);
+  }
+</style>

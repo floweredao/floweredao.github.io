@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import PostList from '../components/PostList.astro';
+import SectionHead from '../components/SectionHead.astro';
+import WorkCard from '../components/WorkCard.astro';
+import { getPosts, getWorks, SITE_NAME } from '../lib/content';
+
+const works = await getWorks();
+const posts = (await getPosts()).slice(0, 5);
+const description = `${SITE_NAME}의 블로그와 작업물 아카이브입니다. 직접 만든 것과 그 과정에서 쓴 글을 모아 둡니다.`;
+---
+
+<BaseLayout title="블로그와 작업물 아카이브" description={description}>
+  <section class="hero container" aria-labelledby="hero-title">
+    <Eyebrow data-reveal>Blog &amp; Works</Eyebrow>
+    <h1 class="hero_wordmark" id="hero-title" data-reveal>{SITE_NAME}</h1>
+    <p class="hero_intro" data-reveal>
+      {SITE_NAME}의 블로그와 작업물 아카이브입니다. 직접 만든 것과 그 과정에서 쓴 글을 이곳에 모아 둡니다.
+    </p>
+    <ul class="hero_links" data-reveal>
+      <li><a class="hero_link" href="/portfolio/">작업물 보기<span aria-hidden="true"> →</span></a></li>
+      <li><a class="hero_link" href="/blog/">블로그 읽기<span aria-hidden="true"> →</span></a></li>
+    </ul>
+  </section>
+
+  <section class="home_section container" aria-labelledby="works-title">
+    <SectionHead
+      eyebrow="Works"
+      title="작업물"
+      titleId="works-title"
+      href="/portfolio/"
+      linkLabel="전체 작업물"
+      data-reveal
+    />
+    {works.length ? (
+      <ul class="card_grid">
+        {works.map((work, index) => (
+          <li data-reveal>
+            <WorkCard work={work} eager={index < 2} />
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty_note">아직 등록된 작업물이 없습니다.</p>
+    )}
+  </section>
+
+  <section class="home_section container" aria-labelledby="blog-title">
+    <SectionHead eyebrow="Blog" title="블로그" titleId="blog-title" href="/blog/" linkLabel="전체 글" data-reveal />
+    {posts.length ? <PostList posts={posts} /> : <p class="empty_note">아직 올라온 글이 없습니다.</p>}
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-16) var(--space-20);
+  }
+
+  .hero_wordmark {
+    font-family: var(--font-display);
+    font-size: var(--text-wordmark);
+    font-weight: 800;
+    letter-spacing: var(--tracking-wordmark);
+    line-height: var(--leading-wordmark);
+    margin-block: var(--space-6) var(--space-10);
+    margin-inline-start: -0.04em;
+    overflow-wrap: anywhere;
+  }
+
+  .hero_intro {
+    font-size: var(--text-lead);
+    max-inline-size: var(--measure-narrow);
+  }
+
+  .hero_links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    list-style: none;
+    margin-block-start: var(--space-8);
+  }
+
+  .hero_link {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .hero_link:hover {
+    text-decoration: underline;
+  }
+
+  .home_section {
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .home_section > :global(.section_head) {
+    margin-block-end: var(--space-8);
+  }
+</style>

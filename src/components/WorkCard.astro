@@ -1,0 +1,149 @@
+---
+import Badge from './Badge.astro';
+import { imageSize } from '../lib/image-size';
+import { workHref, type Work } from '../lib/content';
+
+interface Props {
+  work: Work;
+  eager?: boolean;
+}
+
+const { work, eager = false } = Astro.props;
+const { title, summary, year, platform, visibility, cover } = work.data;
+const size = await imageSize(cover.src);
+---
+
+<article class="work_card">
+  <div class="work_card_media">
+    <img
+      src={cover.src}
+      alt={cover.alt}
+      width={size?.width}
+      height={size?.height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </div>
+  <div class="work_card_body">
+    <p class="work_card_meta">
+      <span class="work_card_year">{year}</span>
+      <span class="work_card_platform">{platform}</span>
+    </p>
+    <h3 class="work_card_title">
+      <a class="work_card_link" href={workHref(work.id)}>{title}</a>
+    </h3>
+    <p class="work_card_summary">{summary}</p>
+    <div class="work_card_foot">
+      <Badge visibility={visibility} />
+      <span class="work_card_arrow" aria-hidden="true">→</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .work_card {
+    background: var(--paper-2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .work_card_media {
+    aspect-ratio: 16 / 10;
+    background: var(--paper);
+    overflow: hidden;
+  }
+
+  .work_card_media img {
+    block-size: 100%;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  .work_card_body {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+  }
+
+  .work_card_meta {
+    align-items: baseline;
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--text-small);
+    gap: var(--space-3);
+  }
+
+  .work_card_year {
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .work_card_platform {
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: var(--space-3);
+  }
+
+  .work_card_title {
+    font-size: var(--text-title);
+    letter-spacing: var(--tracking-title);
+    line-height: var(--leading-title);
+  }
+
+  .work_card_link {
+    text-decoration: none;
+  }
+
+  .work_card_link::after {
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  .work_card_summary {
+    color: var(--ink-dim);
+  }
+
+  .work_card_foot {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-block-start: auto;
+    padding-block-start: var(--space-3);
+  }
+
+  .work_card_arrow {
+    font-size: var(--text-h3);
+    line-height: 1;
+    transition: transform var(--dur-micro) ease-out;
+  }
+
+  .work_card:hover .work_card_link {
+    color: var(--spot);
+  }
+
+  .work_card:hover .work_card_arrow {
+    color: var(--spot);
+    transform: translateX(var(--space-1));
+  }
+
+  @supports selector(:has(a)) {
+    .work_card:has(.work_card_link:focus-visible) {
+      outline: 2px solid var(--spot);
+      outline-offset: 3px;
+    }
+
+    .work_card_link:focus-visible {
+      outline: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work_card_arrow {
+      transition: none;
+    }
+  }
+</style>

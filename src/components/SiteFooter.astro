@@ -1,0 +1,48 @@
+---
+import { SITE_NAME } from '../lib/content';
+---
+
+<footer class="site_footer">
+  <div class="site_footer_row container">
+    <p class="site_footer_copy">© 2026 {SITE_NAME}</p>
+    <ul class="site_footer_links">
+      <li><a href="https://github.com/floweredao" rel="me noopener">GitHub</a></li>
+      <li><a href="/blog/">블로그</a></li>
+      <li><a href="/portfolio/">포트폴리오</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site_footer {
+    border-block-start: 1px solid var(--rule);
+    margin-block-start: var(--space-16);
+  }
+
+  .site_footer_row {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-8);
+    justify-content: space-between;
+    padding-block: var(--space-10);
+  }
+
+  .site_footer_copy {
+    color: var(--ink-dim);
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .site_footer_links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    list-style: none;
+  }
+
+  .site_footer_links a {
+    font-size: var(--text-small);
+  }
+</style>

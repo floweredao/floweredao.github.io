@@ -1,0 +1,39 @@
+---
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+}
+
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<header class="page_header">
+  <Eyebrow data-reveal>{eyebrow}</Eyebrow>
+  <h1 class="page_header_title" data-reveal>{title}</h1>
+  {intro ? <p class="page_header_intro" data-reveal>{intro}</p> : null}
+</header>
+
+<style>
+  .page_header {
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .page_header_title {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 800;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
+    margin-block-start: var(--space-5);
+  }
+
+  .page_header_intro {
+    color: var(--ink-dim);
+    font-size: var(--text-lead);
+    margin-block-start: var(--space-6);
+    max-inline-size: var(--measure-narrow);
+  }
+</style>

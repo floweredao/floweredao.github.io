@@ -1,0 +1,78 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Eyebrow from './Eyebrow.astro';
+
+interface Props extends HTMLAttributes<'header'> {
+  eyebrow: string;
+  title: string;
+  titleId?: string;
+  level?: 'h1' | 'h2';
+  size?: 'display' | 'h2';
+  href?: string;
+  linkLabel?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  titleId,
+  level = 'h2',
+  size = 'display',
+  href,
+  linkLabel,
+  class: className,
+  ...rest
+} = Astro.props;
+const Heading = level;
+---
+
+<header class:list={['section_head', className]} {...rest}>
+  <Eyebrow>{eyebrow}</Eyebrow>
+  <div class="section_head_row">
+    <Heading class="section_head_title" id={titleId} data-size={size}>{title}</Heading>
+    {href && linkLabel ? (
+      <a class="section_head_link" href={href}>
+        {linkLabel}<span aria-hidden="true"> →</span>
+      </a>
+    ) : null}
+  </div>
+</header>
+
+<style>
+  .section_head_row {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+    justify-content: space-between;
+    margin-block-start: var(--space-5);
+  }
+
+  .section_head_title {
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+
+  .section_head_title[data-size='display'] {
+    font-size: var(--text-display);
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
+  }
+
+  .section_head_title[data-size='h2'] {
+    font-size: var(--text-h2);
+    font-weight: 700;
+    letter-spacing: var(--tracking-headline);
+    line-height: var(--leading-h2);
+  }
+
+  .section_head_link {
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .section_head_link:hover {
+    text-decoration: underline;
+  }
+</style>

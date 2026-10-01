@@ -1,0 +1,86 @@
+---
+interface Neighbor {
+  href: string;
+  title: string;
+}
+
+interface Props {
+  prev?: Neighbor;
+  next?: Neighbor;
+  prevLabel: string;
+  nextLabel: string;
+  back: Neighbor;
+}
+
+const { prev, next, prevLabel, nextLabel, back } = Astro.props;
+---
+
+<nav class="prev_next" aria-label="이웃 항목">
+  <div class="prev_next_slot">
+    {prev ? (
+      <a class="prev_next_link" href={prev.href} rel="prev">
+        <span class="prev_next_label">{prevLabel}</span>
+        <span class="prev_next_title">{prev.title}</span>
+      </a>
+    ) : null}
+  </div>
+  <a class="prev_next_back" href={back.href}>{back.title}</a>
+  <div class="prev_next_slot" data-align="end">
+    {next ? (
+      <a class="prev_next_link" href={next.href} rel="next">
+        <span class="prev_next_label">{nextLabel}</span>
+        <span class="prev_next_title">{next.title}</span>
+      </a>
+    ) : null}
+  </div>
+</nav>
+
+<style>
+  .prev_next {
+    border-block-start: 1px solid var(--rule);
+    display: grid;
+    gap: var(--space-5);
+    margin-block-start: var(--space-16);
+    padding-block: var(--space-8);
+  }
+
+  .prev_next_link {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    text-decoration: none;
+  }
+
+  .prev_next_link:hover .prev_next_title {
+    text-decoration: underline;
+  }
+
+  .prev_next_label {
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+  }
+
+  .prev_next_title {
+    font-weight: 500;
+  }
+
+  .prev_next_back {
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  @media (min-width: 48rem) {
+    .prev_next {
+      align-items: start;
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    .prev_next_slot[data-align='end'] {
+      text-align: end;
+    }
+
+    .prev_next_slot[data-align='end'] .prev_next_link {
+      align-items: flex-end;
+    }
+  }
+</style>
