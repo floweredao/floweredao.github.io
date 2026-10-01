@@ -28,8 +28,7 @@ const forbidden = [
   /\/Users\//,
   /C:\\/,
   /[\w.+-]+@(gmail|naver|daum|hanmail|kakao)\.com/i,
-  /KindMeatShop_LAFX/,
-  /github\.com\/floweredao\/KindMeatShop/i,
+  /github\.com\/floweredao\/(?!Speech2Text\b|floweredao\.github\.io\b)[\w.-]+/i,
 ];
 let pages = 0;
 let links = 0;
