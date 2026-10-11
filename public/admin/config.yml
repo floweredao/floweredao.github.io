@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.233/schema/sveltia-cms.json
+backend:
+  name: github
+  repo: floweredao/floweredao.github.io
+  branch: main
+  # GitHub OAuth 중계(sveltia-cms-auth). 비밀값은 Cloudflare에만 있습니다.
+  base_url: https://floweredao-cms-auth.pages.dev
+  auth_scope: public_repo
+  commit_messages:
+    create: 'feat(blog): add post {{slug}}'
+    update: 'fix(blog): update post {{slug}}'
+    delete: 'chore(blog): delete post {{slug}}'
+    uploadMedia: 'chore(blog): upload {{path}}'
+    deleteMedia: 'chore(blog): delete {{path}}'
+
+site_url: https://floweredao.github.io
+display_url: https://floweredao.github.io
+
+media_folder: public/images/blog
+public_folder: /images/blog
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: blog
+    label: 블로그 글
+    label_singular: 글
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    identifier_field: title
+    # 파일 이름이 주소(/blog/<파일 이름>/)가 됩니다. 새 글을 만들 때 영문 소문자·숫자·하이픈으로 바꿔 쓰면 좋습니다.
+    slug:
+      template: '{{slug}}'
+      editable: [create]
+    preview_path: blog/{{slug}}/
+    summary: '{{title}} · {{date}}'
+    sortable_fields:
+      fields: [date, title]
+      default:
+        field: date
+        direction: descending
+    fields:
+      - { name: title, label: 제목, widget: string }
+      - { name: description, label: 요약, widget: text, hint: 목록과 검색 결과에 보이는 한두 문장 }
+      - { name: date, label: 날짜, widget: datetime, type: date, format: YYYY-MM-DD, default: '{{now}}' }
+      - { name: draft, label: 임시저장(공개 안 함), widget: boolean, default: true, hint: 켜 두면 사이트에 올라가지 않습니다. 공개할 때 끄세요. }
+      - { name: tags, label: 태그, widget: list, required: false }
+      - { name: body, label: 본문, widget: markdown }

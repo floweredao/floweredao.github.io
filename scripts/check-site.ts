@@ -12,6 +12,8 @@ const required = [
   "portfolio/index.html",
   "portfolio/speech2text/index.html",
   "portfolio/label-automation/index.html",
+  "admin/index.html",
+  "admin/config.yml",
 ];
 for (const file of required) {
   if (!existsSync(join(dist, file))) fail(`필수 페이지 없음: ${file}`);
@@ -37,6 +39,10 @@ let images = 0;
 for (const rel of new Bun.Glob("**/*.html").scanSync({ cwd: dist })) {
   pages++;
   const html = await Bun.file(join(dist, rel)).text();
+  if (rel.startsWith("admin/") && !/<meta name="robots" content="noindex/.test(html)) {
+    fail(`${rel}: 관리자 페이지에 noindex 없음`);
+  }
+  if (!rel.startsWith("admin/") && /href="\/admin\//.test(html)) fail(`${rel}: 관리자 페이지 링크 노출`);
   for (const pattern of forbidden) {
     if (pattern.test(html)) fail(`${rel}: 금지된 문자열 ${pattern}`);
   }
