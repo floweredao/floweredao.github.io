@@ -23,7 +23,22 @@ bun run check        # 타입·템플릿 검사 (astro check)
 
 `bun run build`가 0으로 끝나야 배포할 수 있습니다. frontmatter가 스키마와 맞지 않으면 빌드가 어떤 파일의 어떤 항목이 잘못됐는지 알려 주며 멈춥니다.
 
-## 블로그 글 쓰기
+## 브라우저에서 글 쓰기 (관리자 페이지)
+
+컴퓨터나 휴대폰 브라우저로 **https://floweredao.github.io/admin/** 에 들어가면 글을 쓸 수 있습니다. 사이트 메뉴에는 보이지 않고 검색에도 잡히지 않게(noindex) 해 두었으니 주소를 즐겨찾기에 넣어 두세요. 화면은 [Sveltia CMS](https://sveltiacms.app)(MIT)이고 설정은 `public/admin/config.yml`에 있습니다.
+
+1. **로그인**: "Sign In with GitHub"를 누르고 floweredao 계정으로 로그인합니다. 처음 한 번은 GitHub가 "floweredao 글 관리" 앱에 권한을 줄지 물으니 **Authorize**를 누릅니다. 이 저장소에 쓰기 권한이 있는 계정만 들어갈 수 있습니다.
+2. **새 글**: 왼쪽 "블로그 글" → "새로 만들기". 제목·요약·날짜·태그·본문을 채웁니다. 본문 편집기의 이미지 버튼으로 사진을 올리면 `public/images/blog/`에 저장되고 본문에 `/images/blog/파일명`으로 들어갑니다. 이미지 설명(alt)은 꼭 적어 주세요. 비어 있으면 점검에서 배포가 멈춥니다.
+3. **주소(파일 이름)**: 새 글을 만들 때 나오는 슬러그 칸이 `/blog/<슬러그>/` 주소가 됩니다. 제목으로 미리 채워지지만 영문 소문자·숫자·하이픈으로 바꿔 쓰는 편이 안전합니다(예: `first-post`). 저장한 뒤에는 바꿀 수 없습니다.
+4. **임시저장**: "임시저장(공개 안 함)"은 새 글에서 켜져 있습니다. 켜 둔 채로 저장하면 저장소에는 남지만 사이트에는 나오지 않습니다. 공개할 때 끄고 다시 저장합니다.
+5. **저장 = 배포**: 저장하면 `main` 브랜치에 커밋이 하나 생깁니다. 1–3분 안에 아래 "자동 배포"가 빌드·점검하고 사이트에 올립니다. 오른쪽 미리보기는 저장 전에 대략의 모양을 보여 줍니다(사이트 디자인과 글꼴은 다를 수 있습니다).
+6. **수정·삭제**: 목록에서 글을 열어 고치거나 삭제합니다. 이것도 커밋이 되고 자동으로 배포됩니다.
+
+로그인은 Cloudflare Pages의 `floweredao-cms-auth`(https://floweredao-cms-auth.pages.dev, [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) 코드 그대로)가 GitHub OAuth를 중계합니다. OAuth 비밀값은 그 프로젝트의 비밀 변수와 이 맥 키체인에만 있고 저장소에는 없습니다.
+
+파일을 직접 고치고 싶다면 아래처럼 마크다운 파일을 만들어도 됩니다.
+
+## 블로그 글 쓰기 (파일로)
 
 `src/content/blog/` 아래에 마크다운 파일 하나가 글 하나입니다. **파일 이름이 주소(slug)** 가 됩니다. 예를 들어 `src/content/blog/hello.md`는 `/blog/hello/`로 열립니다. 파일 이름은 영문 소문자, 숫자, 하이픈(`-`)만 쓰는 편이 안전합니다.
 
@@ -110,6 +125,17 @@ gallery:
 
 GitHub Pages는 `gh-pages` 브랜치의 루트(`/`)를 그대로 서비스합니다. 저장소 Settings → Pages → Build and deployment에서 Source를 **Deploy from a branch**, Branch를 **gh-pages / (root)** 로 한 번만 설정해 두면 됩니다. `public/.nojekyll`이 `dist/`로 복사되므로 Jekyll 처리 없이 파일이 그대로 올라갑니다.
 
+### 자동 배포 (main에 커밋하면)
+
+이 맥의 LaunchAgent `local.portfolio-autodeploy`(`~/Library/LaunchAgents/local.portfolio-autodeploy.plist`)가 1분마다 `scripts/autodeploy.sh`를 돌립니다. 작업 폴더는 `~/.local/share/portfolio-autodeploy/`(전용 클론 `repo/`, 마지막 로그 `last-run.log`)입니다. `origin/main`에 새 커밋이 있으면 `bun run build` → `bun run check:site` → `scripts/deploy-gh-pages.sh` 순서로 돌고, 하나라도 실패하면 배포하지 않습니다. 결과는 `~/.local/share/ddolmeng-mode/state/events.log`에 한 줄씩 남습니다.
+
+```
+EVENT PORTFOLIO_DEPLOYED <커밋>
+EVENT PORTFOLIO_DEPLOY_FAIL <커밋> <install|build|check:site|deploy> (로그: …/last-run.log)
+```
+
+실패한 커밋은 다시 시도하지 않고, 고친 커밋이 올라오면 그것을 배포합니다. 멈추려면 `launchctl bootout gui/$(id -u)/local.portfolio-autodeploy`, 다시 켜려면 `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/local.portfolio-autodeploy.plist`.
+
 ### 스크립트로 올리기
 
 ```sh
@@ -154,6 +180,8 @@ src/styles/             tokens.css(디자인 토큰) · base.css · prose.css ·
 src/lib/                컬렉션 조회·정렬·날짜 형식, 이미지 크기 읽기
 public/                 favicon.svg, .nojekyll, images/<slug>/…
 scripts/deploy-gh-pages.sh   dist/ 를 gh-pages 로 올리는 스크립트
+scripts/autodeploy.sh   main 새 커밋 → 빌드·점검·배포 (LaunchAgent가 1분마다)
+public/admin/           관리자 페이지(Sveltia CMS) index.html · config.yml
 DESIGN.md               디자인 시스템 계약 (색·서체·간격·컴포넌트·모션)
 ```
 
