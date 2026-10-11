@@ -39,8 +39,18 @@ const shots = await Promise.all(
     list-style: none;
   }
 
+  .gallery_item {
+    display: grid;
+  }
+
+  .gallery_figure {
+    display: flex;
+    flex-direction: column;
+  }
+
   .gallery_frame {
     background: var(--paper-2);
+    flex: 1 0 auto;
   }
 
   .gallery_frame img {
