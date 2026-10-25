@@ -11,6 +11,7 @@ const required = [
   "portfolio/index.html",
   "portfolio/speech2text/index.html",
   "portfolio/label-automation/index.html",
+  "en/index.html",
   "en/portfolio/index.html",
   "en/portfolio/speech2text/index.html",
   "en/portfolio/label-automation/index.html",
@@ -64,6 +65,9 @@ for (const rel of new Bun.Glob("**/*.html").scanSync({ cwd: dist })) {
   // 공개 페이지는 링크 미리보기 그림(og:image)이 있어야 하고, 그 파일이 dist에 있어야 합니다.
   if (!rel.startsWith("admin/")) {
     const og = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+    if (!/class="site_header_link site_header_lang"[^>]*href="\/|href="\/[^"]*"[^>]*class="site_header_link site_header_lang"/.test(html)) {
+      fail(`${rel}: 헤더에 언어 전환 링크 없음`);
+    }
     if (!og) fail(`${rel}: og:image 없음`);
     else if (!resolves(new URL(og).pathname)) fail(`${rel}: og:image 파일 없음 ${og}`);
   }

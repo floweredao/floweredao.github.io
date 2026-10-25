@@ -11,7 +11,7 @@ const posts = (await getPosts()).slice(0, 5);
 const description = `${SITE_NAME}의 블로그와 작업물 아카이브입니다. 직접 만든 것과 그 과정에서 쓴 글을 모아 둡니다.`;
 ---
 
-<BaseLayout title="블로그와 작업물 아카이브" description={description}>
+<BaseLayout title="블로그와 작업물 아카이브" description={description} alternates={{ ko: '/', en: '/en/' }}>
   <section class="hero container" aria-labelledby="hero-title">
     <Eyebrow data-reveal>Blog &amp; Works</Eyebrow>
     <h1 class="hero_wordmark" id="hero-title" data-reveal>{SITE_NAME}</h1>

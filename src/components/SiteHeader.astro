@@ -22,7 +22,9 @@ const sections: { href: string; label: string; hreflang?: string }[] =
         { href: '/portfolio/', label: t.portfolio },
       ];
 const other = lang === 'ko' ? 'en' : 'ko';
-const brandHref = lang === 'en' ? '/en/portfolio/' : '/';
+const brandHref = lang === 'en' ? '/en/' : '/';
+// 다른 언어판이 없는 페이지에서도 언어 전환 링크는 그 언어의 첫 화면으로 보냅니다.
+const switchHref = alternates?.[other] ?? (other === 'en' ? '/en/' : '/');
 const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
 ---
 
@@ -38,13 +40,11 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
             </a>
           </li>
         ))}
-        {alternates ? (
-          <li>
-            <a class="site_header_link site_header_lang" href={alternates[other]} hreflang={other} lang={other}>
-              {t.switchLabel}
-            </a>
-          </li>
-        ) : null}
+        <li>
+          <a class="site_header_link site_header_lang" href={switchHref} hreflang={other} lang={other}>
+            {t.switchLabel}
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
