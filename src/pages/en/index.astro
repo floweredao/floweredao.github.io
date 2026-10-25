@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getWorks, SITE_NAME } from '../../lib/content';
+
+// 영어 첫 화면: 영어판이 있는 포트폴리오로 안내하고, 블로그는 한국어뿐이라고 알립니다.
+const works = await getWorks('en');
+const description = `${SITE_NAME} builds apps and tools. Browse the portfolio in English; the blog is written in Korean.`;
+---
+
+<BaseLayout title="Blog and works archive" description={description} lang="en" alternates={{ ko: '/', en: '/en/' }}>
+  <div class="page container">
+    <PageHeader
+      eyebrow="Blog & Works"
+      title={SITE_NAME}
+      intro="An archive of things I built and notes from building them. The portfolio is available in English; the blog is written in Korean."
+    />
+    <ul class="hero_links" data-reveal>
+      <li><a class="hero_link" href="/en/portfolio/">See the portfolio<span aria-hidden="true"> →</span></a></li>
+      <li><a class="hero_link" href="/blog/" hreflang="ko">Read the blog (Korean)<span aria-hidden="true"> →</span></a></li>
+    </ul>
+    {works.length ? (
+      <ul class="card_grid">
+        {works.map((work, index) => (
+          <li data-reveal>
+            <WorkCard work={work} eager={index < 2} lang="en" />
+          </li>
+        ))}
+      </ul>
+    ) : null}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+
+  .hero_links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    list-style: none;
+    margin-block: calc(-1 * var(--space-8)) var(--space-12);
+  }
+
+  .hero_link {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .hero_link:hover {
+    text-decoration: underline;
+  }
+</style>

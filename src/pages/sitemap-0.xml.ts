@@ -16,6 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
       : []),
     { path: '/portfolio/' },
     ...works.map((work) => ({ path: workHref(work.id) })),
+    { path: '/en/' },
     ...(worksEn.length ? [{ path: '/en/portfolio/' }] : []),
     ...worksEn.map((work) => ({ path: workHref(work.id, 'en') })),
   ];
