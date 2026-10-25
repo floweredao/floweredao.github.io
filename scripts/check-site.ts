@@ -11,6 +11,9 @@ const required = [
   "portfolio/index.html",
   "portfolio/speech2text/index.html",
   "portfolio/label-automation/index.html",
+  "en/portfolio/index.html",
+  "en/portfolio/speech2text/index.html",
+  "en/portfolio/label-automation/index.html",
   "admin/index.html",
   "admin/config.yml",
   "rss.xml",
@@ -60,6 +63,20 @@ for (const rel of new Bun.Glob("**/*.html").scanSync({ cwd: dist })) {
   if (!rel.startsWith("admin/") && /href="\/admin\//.test(html)) fail(`${rel}: 관리자 페이지 링크 노출`);
   for (const pattern of forbidden) {
     if (pattern.test(html)) fail(`${rel}: 금지된 문자열 ${pattern}`);
+  }
+  // 언어판 링크(hreflang)는 서로 가리켜야 하고, en/ 아래 페이지는 lang="en"이어야 합니다.
+  if (rel.startsWith("en/") && !/<html lang="en"/.test(html)) fail(`${rel}: 영어판인데 lang="en" 아님`);
+  const self = new URL(`/${rel.replace(/index\.html$/, "")}`, "https://floweredao.github.io").href;
+  for (const [, href] of html.matchAll(/<link rel="alternate" hreflang="(?:ko|en)" href="([^"]+)"/g)) {
+    const path = new URL(href).pathname;
+    if (!resolves(path)) {
+      fail(`${rel}: hreflang 대상 없음 ${path}`);
+      continue;
+    }
+    const other = await Bun.file(join(dist, path, "index.html")).text();
+    if (!other.includes(`hreflang="ko" href="${self}"`) && !other.includes(`hreflang="en" href="${self}"`)) {
+      fail(`${rel}: ${path}가 이 페이지를 hreflang으로 되가리키지 않음`);
+    }
   }
   for (const [, attr, value] of html.matchAll(/\s(href|src)="([^"]*)"/g)) {
     if (attr === "href" && (value === "" || value === "#")) {

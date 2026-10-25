@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import { getWorks } from '../../../lib/content';
+
+const works = await getWorks('en');
+const description = 'Apps and tools built by floweredao: what each one does, its main features, screens, and stack.';
+---
+
+<BaseLayout title="Portfolio" description={description} lang="en" alternates={{ ko: '/portfolio/', en: '/en/portfolio/' }}>
+  <div class="page container">
+    <PageHeader
+      eyebrow="Works"
+      title="Portfolio"
+      intro="Things I built myself. Each entry covers what it does, its main features, screens, and the stack."
+    />
+    {works.length ? (
+      <ul class="card_grid">
+        {works.map((work, index) => (
+          <li data-reveal>
+            <WorkCard work={work} eager={index < 2} lang="en" />
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty_note">No works yet.</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+</style>

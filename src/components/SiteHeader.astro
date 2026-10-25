@@ -1,26 +1,50 @@
 ---
 import { SITE_NAME } from '../lib/content';
+import { ui, type Alternates, type Lang } from '../lib/i18n';
 
+interface Props {
+  lang?: Lang;
+  alternates?: Alternates;
+}
+
+const { lang = 'ko', alternates } = Astro.props;
+const t = ui[lang];
 const path = Astro.url.pathname;
-const sections = [
-  { href: '/blog/', label: '블로그' },
-  { href: '/portfolio/', label: '포트폴리오' },
-];
+// 영어판은 아직 포트폴리오만 있어서 블로그는 한국어판으로 보냅니다.
+const sections: { href: string; label: string; hreflang?: string }[] =
+  lang === 'en'
+    ? [
+        { href: '/en/portfolio/', label: t.portfolio },
+        { href: '/blog/', label: t.blog, hreflang: 'ko' },
+      ]
+    : [
+        { href: '/blog/', label: t.blog },
+        { href: '/portfolio/', label: t.portfolio },
+      ];
+const other = lang === 'ko' ? 'en' : 'ko';
+const brandHref = lang === 'en' ? '/en/portfolio/' : '/';
 const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
 ---
 
 <header class="site_header">
   <div class="site_header_row container">
-    <a class="site_header_brand" href="/" aria-current={path === '/' ? 'page' : undefined}>{SITE_NAME}</a>
-    <nav class="site_header_nav" aria-label="주 메뉴">
+    <a class="site_header_brand" href={brandHref} aria-current={path === brandHref ? 'page' : undefined}>{SITE_NAME}</a>
+    <nav class="site_header_nav" aria-label={t.mainNav}>
       <ul class="site_header_list">
         {sections.map((section) => (
           <li>
-            <a class="site_header_link" href={section.href} aria-current={current(section.href)}>
+            <a class="site_header_link" href={section.href} hreflang={section.hreflang} aria-current={current(section.href)}>
               {section.label}
             </a>
           </li>
         ))}
+        {alternates ? (
+          <li>
+            <a class="site_header_link site_header_lang" href={alternates[other]} hreflang={other} lang={other}>
+              {t.switchLabel}
+            </a>
+          </li>
+        ) : null}
       </ul>
     </nav>
   </div>
@@ -58,6 +82,11 @@ const current = (href: string) => (path.startsWith(href) ? 'page' : undefined);
     color: var(--ink-dim);
     font-weight: 500;
     text-decoration: none;
+  }
+
+  .site_header_lang {
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: var(--space-5);
   }
 
   .site_header_link:hover,

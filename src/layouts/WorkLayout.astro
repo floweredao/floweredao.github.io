@@ -10,31 +10,35 @@ import SectionHead from '../components/SectionHead.astro';
 import TagList from '../components/TagList.astro';
 import { imageSize } from '../lib/image-size';
 import { workHref, type Work } from '../lib/content';
+import { ui, type Alternates, type Lang } from '../lib/i18n';
 
 interface Props {
   work: Work;
   prev?: Work;
   next?: Work;
+  lang?: Lang;
+  alternates?: Alternates;
 }
 
-const { work, prev, next } = Astro.props;
+const { work, prev, next, lang = 'ko', alternates } = Astro.props;
+const t = ui[lang];
 const { title, tagline, summary, audience, platform, year, visibility, stack, links, cover, features, gallery } =
   work.data;
 const isPublic = visibility === 'public';
-const visibilityLabel = isPublic ? '공개 저장소' : '비공개 프로젝트';
+const visibilityLabel = t[visibility];
 const showLinks = isPublic && links.length > 0;
 const coverSize = await imageSize(cover.src);
 const meta = [
-  { term: '대상', detail: audience },
-  { term: '플랫폼', detail: platform },
-  { term: '연도', detail: year },
-  { term: '공개 여부', detail: visibilityLabel },
+  { term: t.audience, detail: audience },
+  { term: t.platform, detail: platform },
+  { term: t.year, detail: year },
+  { term: t.visibility, detail: visibilityLabel },
 ];
 const neighbor = (target?: Work) =>
-  target ? { href: workHref(target.id), title: target.data.title } : undefined;
+  target ? { href: workHref(target.id, lang), title: target.data.title } : undefined;
 ---
 
-<BaseLayout title={title} description={summary} image={cover.src}>
+<BaseLayout title={title} description={summary} image={cover.src} lang={lang} alternates={alternates}>
   <article class="work container">
     <header class="work_header">
       <Eyebrow data-reveal>Works / {year}</Eyebrow>
@@ -56,7 +60,7 @@ const neighbor = (target?: Work) =>
       ) : null}
       {!isPublic ? (
         <p class="work_private" data-reveal>
-          소스 코드는 공개하지 않는 프로젝트입니다.
+          {t.privateNote}
         </p>
       ) : null}
     </header>
@@ -79,31 +83,32 @@ const neighbor = (target?: Work) =>
 
     {features.length ? (
       <section class="work_section" aria-labelledby="work-features">
-        <SectionHead eyebrow="Features" title="주요 기능" titleId="work-features" size="h2" />
+        <SectionHead eyebrow="Features" title={t.features} titleId="work-features" size="h2" />
         <FeatureGrid features={features} />
       </section>
     ) : null}
 
     {gallery.length ? (
       <section class="work_section" aria-labelledby="work-screens">
-        <SectionHead eyebrow="Screens" title="화면" titleId="work-screens" size="h2" />
+        <SectionHead eyebrow="Screens" title={t.screens} titleId="work-screens" size="h2" />
         <Gallery items={gallery} />
       </section>
     ) : null}
 
     {stack.length ? (
       <section class="work_section" aria-labelledby="work-stack">
-        <SectionHead eyebrow="Stack" title="사용 기술" titleId="work-stack" size="h2" />
-        <TagList items={stack} label="사용 기술" />
+        <SectionHead eyebrow="Stack" title={t.stack} titleId="work-stack" size="h2" />
+        <TagList items={stack} label={t.stack} />
       </section>
     ) : null}
 
     <PrevNext
       prev={neighbor(prev)}
       next={neighbor(next)}
-      prevLabel="이전 작업물"
-      nextLabel="다음 작업물"
-      back={{ href: '/portfolio/', title: '포트폴리오 목록으로' }}
+      prevLabel={t.prevWork}
+      nextLabel={t.nextWork}
+      back={{ href: lang === 'en' ? '/en/portfolio/' : '/portfolio/', title: t.backToWorks }}
+      label={t.neighbors}
     />
   </article>
 </BaseLayout>

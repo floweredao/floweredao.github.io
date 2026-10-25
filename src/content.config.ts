@@ -32,9 +32,7 @@ const galleryItem = image.extend({
   caption: z.string(),
 });
 
-const portfolio = defineCollection({
-  loader: glob({ base: './src/content/portfolio', pattern: '*.md' }),
-  schema: z.object({
+const workSchema = z.object({
     title: z.string(),
     tagline: z.string(),
     summary: z.string(),
@@ -48,7 +46,17 @@ const portfolio = defineCollection({
     cover: image,
     features: z.array(feature).default([]),
     gallery: z.array(galleryItem).default([]),
-  }),
 });
 
-export const collections = { blog, portfolio };
+const portfolio = defineCollection({
+  loader: glob({ base: './src/content/portfolio', pattern: '*.md' }),
+  schema: workSchema,
+});
+
+// 영어판 작업물. 파일 이름(id)이 한국어판과 같아야 서로 이어집니다.
+const portfolioEn = defineCollection({
+  loader: glob({ base: './src/content/portfolio-en', pattern: '*.md' }),
+  schema: workSchema,
+});
+
+export const collections = { blog, portfolio, portfolioEn };

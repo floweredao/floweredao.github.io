@@ -2,13 +2,15 @@
 import Badge from './Badge.astro';
 import { imageSize } from '../lib/image-size';
 import { workHref, type Work } from '../lib/content';
+import type { Lang } from '../lib/i18n';
 
 interface Props {
   work: Work;
   eager?: boolean;
+  lang?: Lang;
 }
 
-const { work, eager = false } = Astro.props;
+const { work, eager = false, lang = 'ko' } = Astro.props;
 const { title, summary, year, platform, visibility, cover } = work.data;
 const size = await imageSize(cover.src);
 ---
@@ -30,11 +32,11 @@ const size = await imageSize(cover.src);
       <span class="work_card_platform">{platform}</span>
     </p>
     <h3 class="work_card_title">
-      <a class="work_card_link" href={workHref(work.id)}>{title}</a>
+      <a class="work_card_link" href={workHref(work.id, lang)}>{title}</a>
     </h3>
     <p class="work_card_summary">{summary}</p>
     <div class="work_card_foot">
-      <Badge visibility={visibility} />
+      <Badge visibility={visibility} lang={lang} />
       <span class="work_card_arrow" aria-hidden="true">→</span>
     </div>
   </div>

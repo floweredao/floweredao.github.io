@@ -1,0 +1,25 @@
+---
+import { render } from 'astro:content';
+import WorkLayout from '../../../layouts/WorkLayout.astro';
+import { getWorks, workHref } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const works = await getWorks('en');
+  return works.map((work, index) => ({
+    params: { slug: work.id },
+    props: {
+      work,
+      prev: works[index - 1],
+      next: works[index + 1],
+      alternates: { ko: workHref(work.id), en: workHref(work.id, 'en') },
+    },
+  }));
+}
+
+const { work, prev, next, alternates } = Astro.props;
+const { Content } = await render(work);
+---
+
+<WorkLayout work={work} prev={prev} next={next} lang="en" alternates={alternates}>
+  <Content />
+</WorkLayout>

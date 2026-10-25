@@ -6,6 +6,7 @@ import { escapeXml, xmlResponse } from '../lib/xml';
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getPosts();
   const works = await getWorks();
+  const worksEn = await getWorks('en');
   const entries: { path: string; lastmod?: string }[] = [
     { path: '/' },
     { path: '/blog/' },
@@ -15,6 +16,8 @@ export const GET: APIRoute = async ({ site }) => {
       : []),
     { path: '/portfolio/' },
     ...works.map((work) => ({ path: workHref(work.id) })),
+    ...(worksEn.length ? [{ path: '/en/portfolio/' }] : []),
+    ...worksEn.map((work) => ({ path: workHref(work.id, 'en') })),
   ];
   const urls = entries
     .map(({ path, lastmod }) => {

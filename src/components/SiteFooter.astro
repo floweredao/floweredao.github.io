@@ -1,5 +1,13 @@
 ---
 import { SITE_NAME } from '../lib/content';
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'ko' } = Astro.props;
+const t = ui[lang];
 ---
 
 <footer class="site_footer">
@@ -7,8 +15,8 @@ import { SITE_NAME } from '../lib/content';
     <p class="site_footer_copy">© 2026 {SITE_NAME}</p>
     <ul class="site_footer_links">
       <li><a href="https://github.com/floweredao" rel="me noopener">GitHub</a></li>
-      <li><a href="/blog/">블로그</a></li>
-      <li><a href="/portfolio/">포트폴리오</a></li>
+      <li><a href="/blog/" hreflang={lang === 'en' ? 'ko' : undefined}>{t.blog}</a></li>
+      <li><a href={lang === 'en' ? '/en/portfolio/' : '/portfolio/'}>{t.portfolio}</a></li>
     </ul>
   </div>
 </footer>

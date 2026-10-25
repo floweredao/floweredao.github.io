@@ -1,10 +1,13 @@
 ---
+import { ui, type Lang } from '../lib/i18n';
+
 interface Props {
   visibility: 'public' | 'private';
+  lang?: Lang;
 }
 
-const { visibility } = Astro.props;
-const label = visibility === 'public' ? '공개 저장소' : '비공개 프로젝트';
+const { visibility, lang = 'ko' } = Astro.props;
+const label = ui[lang][visibility];
 ---
 
 <span class="badge" data-visibility={visibility}>{label}</span>

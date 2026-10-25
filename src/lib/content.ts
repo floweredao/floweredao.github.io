@@ -1,7 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import type { Lang } from './i18n';
 
 export type Post = CollectionEntry<'blog'>;
-export type Work = CollectionEntry<'portfolio'>;
+export type Work = CollectionEntry<'portfolio'> | CollectionEntry<'portfolioEn'>;
 
 export const SITE_NAME = 'floweredao';
 
@@ -13,8 +14,8 @@ export async function getPosts(): Promise<Post[]> {
   );
 }
 
-export async function getWorks(): Promise<Work[]> {
-  const works = await getCollection('portfolio');
+export async function getWorks(lang: Lang = 'ko'): Promise<Work[]> {
+  const works: Work[] = await getCollection(lang === 'en' ? 'portfolioEn' : 'portfolio');
   return works.sort(
     (a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title, 'ko'),
   );
@@ -33,7 +34,8 @@ export function countTags(posts: Post[]): { tag: string; count: number }[] {
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, 'ko'));
 }
 
-export const workHref = (id: string): string => `/portfolio/${id}/`;
+export const workHref = (id: string, lang: Lang = 'ko'): string =>
+  lang === 'en' ? `/en/portfolio/${id}/` : `/portfolio/${id}/`;
 
 const koreanDate = new Intl.DateTimeFormat('ko-KR', {
   year: 'numeric',
