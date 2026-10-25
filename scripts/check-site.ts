@@ -8,13 +8,20 @@ const fail = (msg: string) => failures.push(msg);
 const required = [
   "index.html",
   "blog/index.html",
-  "blog/hello/index.html",
   "portfolio/index.html",
   "portfolio/speech2text/index.html",
   "portfolio/label-automation/index.html",
   "admin/index.html",
   "admin/config.yml",
 ];
+// 공개 글(draft가 아닌 글)마다 상세 페이지가 있어야 합니다. 글이 없어도 실패하지 않습니다.
+const blogSrc = join(import.meta.dir, "..", "src", "content", "blog");
+for (const md of new Bun.Glob("*.md").scanSync({ cwd: blogSrc })) {
+  const front = (await Bun.file(join(blogSrc, md)).text()).split(/^---$/m)[1] ?? "";
+  if (/^draft:\s*true\b/m.test(front)) continue;
+  required.push(`blog/${md.slice(0, -3)}/index.html`);
+}
+
 for (const file of required) {
   if (!existsSync(join(dist, file))) fail(`필수 페이지 없음: ${file}`);
 }
