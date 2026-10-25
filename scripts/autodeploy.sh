@@ -95,7 +95,7 @@ fi
 bun run build >>"$log" 2>&1 || fail "build"
 bun run check:site >>"$log" 2>&1 || fail "check:site"
 write_status success ""
-DEPLOY_STATUS_FILE="$status" bash scripts/deploy-gh-pages.sh >>"$log" 2>&1 || fail "deploy"
+DEPLOY_SKIP_BUILD=1 DEPLOY_STATUS_FILE="$status" bash scripts/deploy-gh-pages.sh >>"$log" 2>&1 || fail "deploy"
 
 echo "$commit" >"$work/last-deployed"
 rm -f "$work/last-failed"

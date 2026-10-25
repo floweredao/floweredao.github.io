@@ -8,7 +8,12 @@ branch="${2:-gh-pages}"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$root"
-bun run build
+# autodeploy.sh는 check:site를 통과한 dist를 그대로 올리려고 DEPLOY_SKIP_BUILD=1을 넘깁니다.
+if [ -n "${DEPLOY_SKIP_BUILD:-}" ]; then
+  [ -f dist/index.html ] || { echo "dist/가 없습니다. 먼저 빌드하세요." >&2; exit 1; }
+else
+  bun run build
+fi
 
 remote_url="$(git remote get-url "$remote")"
 stage="$(mktemp -d)"
