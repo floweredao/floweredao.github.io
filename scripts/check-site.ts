@@ -13,6 +13,10 @@ const required = [
   "portfolio/label-automation/index.html",
   "admin/index.html",
   "admin/config.yml",
+  "rss.xml",
+  "sitemap-index.xml",
+  "sitemap-0.xml",
+  "robots.txt",
 ];
 // 공개 글(draft가 아닌 글)마다 상세 페이지가 있어야 합니다. 글이 없어도 실패하지 않습니다.
 const blogSrc = join(import.meta.dir, "..", "src", "content", "blog");
