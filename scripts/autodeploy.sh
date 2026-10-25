@@ -39,8 +39,33 @@ short="${commit:0:7}"
 [ "$commit" = "$(cat "$work/last-deployed" 2>/dev/null)" ] && exit 0
 [ "$commit" = "$(cat "$work/last-failed" 2>/dev/null)" ] && exit 0
 
+# 사이트의 /deploy-status.json에 올릴 마지막 배포 결과. 경로·로그 같은 내부 정보는 넣지 않습니다.
+status="$work/deploy-status.json"
+write_status() { # <success|failed> <실패 단계 또는 빈 값>
+  printf '{\n  "commit": "%s",\n  "result": "%s",\n  "failedStep": %s,\n  "finishedAt": "%s",\n  "liveCommit": "%s"\n}\n' \
+    "$commit" "$1" "$([ -n "$2" ] && echo "\"$2\"" || echo null)" "$(date -u +%FT%TZ)" \
+    "$([ "$1" = success ] && echo "$commit" || cat "$work/last-deployed" 2>/dev/null)" >"$status"
+}
+
+# 실패해도 사이트 내용은 그대로 두고 gh-pages의 deploy-status.json만 일반 커밋으로 바꿉니다.
+publish_failed_status() {
+  local stage
+  stage="$(mktemp -d)" || return 1
+  git clone -q --depth 1 -b gh-pages "$(git -C "$repo" remote get-url origin)" "$stage" &&
+    cp "$status" "$stage/deploy-status.json" &&
+    git -C "$stage" add deploy-status.json &&
+    git -C "$stage" -c user.name=floweredao -c user.email=floweredao@users.noreply.github.com \
+      commit -q -m "deploy-status: $short failed" &&
+    git -C "$stage" push -q origin gh-pages
+  local rc=$?
+  rm -rf "$stage"
+  return $rc
+}
+
 fail() {
   echo "$commit" >"$work/last-failed"
+  write_status failed "$1"
+  publish_failed_status >>"$log" 2>&1 || echo "deploy-status.json 올리기 실패" >>"$log"
   echo "EVENT PORTFOLIO_DEPLOY_FAIL $short $1 (로그: $log)" >>"$events"
   exit 1
 }
@@ -58,7 +83,8 @@ if [ ! -d node_modules ] || ! cmp -s bun.lock node_modules/.autodeploy-bun.lock;
 fi
 bun run build >>"$log" 2>&1 || fail "build"
 bun run check:site >>"$log" 2>&1 || fail "check:site"
-bash scripts/deploy-gh-pages.sh >>"$log" 2>&1 || fail "deploy"
+write_status success ""
+DEPLOY_STATUS_FILE="$status" bash scripts/deploy-gh-pages.sh >>"$log" 2>&1 || fail "deploy"
 
 echo "$commit" >"$work/last-deployed"
 rm -f "$work/last-failed"
