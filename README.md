@@ -5,6 +5,7 @@ floweredao의 블로그와 작업물(포트폴리오)을 담는 정적 사이트
 - `/` 홈: 소개, 작업물 카드, 최신 글
 - `/blog/` 블로그 목록, `/blog/<slug>/` 글
 - `/portfolio/` 작업물 목록, `/portfolio/<slug>/` 작업물 상세
+- `/rss.xml` 블로그 RSS(공개 글만), `/sitemap-index.xml` 사이트맵, `/robots.txt`
 
 ## 요구 사항
 
