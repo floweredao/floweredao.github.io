@@ -37,7 +37,16 @@ git -C "$repo" fetch -q origin main || exit 0
 commit="$(git -C "$repo" rev-parse origin/main)"
 short="${commit:0:7}"
 [ "$commit" = "$(cat "$work/last-deployed" 2>/dev/null)" ] && exit 0
-[ "$commit" = "$(cat "$work/last-failed" 2>/dev/null)" ] && exit 0
+# last-failed: "<커밋> <단계> <횟수>". build·check:site 실패는 코드 문제라 같은 커밋을 다시 돌리지 않습니다.
+# checkout·install·deploy는 네트워크·토큰 같은 일시 오류일 수 있어 같은 커밋을 max_tries번까지 다시 시도합니다.
+max_tries=3
+read -r failed_commit failed_step failed_count 2>/dev/null <"$work/last-failed"
+if [ "$commit" = "${failed_commit:-}" ]; then
+  case "${failed_step:-}" in
+    checkout | install | deploy) [ "${failed_count:-$max_tries}" -ge "$max_tries" ] && exit 0 ;;
+    *) exit 0 ;;
+  esac
+fi
 
 # 사이트의 /deploy-status.json에 올릴 마지막 배포 결과. 경로·로그 같은 내부 정보는 넣지 않습니다.
 status="$work/deploy-status.json"
@@ -63,10 +72,12 @@ publish_failed_status() {
 }
 
 fail() {
-  echo "$commit" >"$work/last-failed"
+  local tries=1
+  [ "$commit" = "${failed_commit:-}" ] && [ "$1" = "${failed_step:-}" ] && tries=$((${failed_count:-0} + 1))
+  echo "$commit $1 $tries" >"$work/last-failed"
   write_status failed "$1"
   publish_failed_status >>"$log" 2>&1 || echo "deploy-status.json 올리기 실패" >>"$log"
-  echo "EVENT PORTFOLIO_DEPLOY_FAIL $short $1 (로그: $log)" >>"$events"
+  echo "EVENT PORTFOLIO_DEPLOY_FAIL $short $1 (시도 $tries, 로그: $log)" >>"$events"
   exit 1
 }
 
