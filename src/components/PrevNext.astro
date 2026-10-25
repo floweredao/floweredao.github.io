@@ -10,12 +10,13 @@ interface Props {
   prevLabel: string;
   nextLabel: string;
   back: Neighbor;
+  label?: string;
 }
 
-const { prev, next, prevLabel, nextLabel, back } = Astro.props;
+const { prev, next, prevLabel, nextLabel, back, label = '이웃 항목' } = Astro.props;
 ---
 
-<nav class="prev_next" aria-label="이웃 항목">
+<nav class="prev_next" aria-label={label}>
   <div class="prev_next_slot">
     {prev ? (
       <a class="prev_next_link" href={prev.href} rel="prev">

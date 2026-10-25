@@ -8,7 +8,7 @@ const works = await getWorks();
 const description = `${SITE_NAME}가 만든 작업물의 목록입니다.`;
 ---
 
-<BaseLayout title="포트폴리오" description={description}>
+<BaseLayout title="포트폴리오" description={description} alternates={{ ko: '/portfolio/', en: '/en/portfolio/' }}>
   <div class="page container">
     <PageHeader eyebrow="Works" title="포트폴리오" intro="직접 만든 작업물을 모아 둡니다. 각 항목에서 소개, 주요 기능, 화면, 사용 기술을 볼 수 있습니다." />
     {works.length ? (
