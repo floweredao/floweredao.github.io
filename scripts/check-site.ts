@@ -24,6 +24,10 @@ for (const md of new Bun.Glob("*.md").scanSync({ cwd: blogSrc })) {
   const front = (await Bun.file(join(blogSrc, md)).text()).split(/^---$/m)[1] ?? "";
   if (/^draft:\s*true\b/m.test(front)) continue;
   required.push(`blog/${md.slice(0, -3)}/index.html`);
+  // 공개 글의 태그마다 태그 페이지가 있어야 합니다.
+  const tags = front.match(/^tags:\s*\[(.*)\]/m)?.[1].match(/"([^"]+)"/g) ?? [];
+  if (tags.length) required.push("blog/tags/index.html");
+  for (const tag of tags) required.push(`blog/tags/${tag.slice(1, -1)}/index.html`);
 }
 
 for (const file of required) {

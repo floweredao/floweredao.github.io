@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import { countTags, getPosts, SITE_NAME, tagHref } from '../../../lib/content';
+
+const tags = countTags(await getPosts());
+const description = `${SITE_NAME} 블로그의 모든 태그입니다. 태그를 누르면 그 주제의 글만 모아 봅니다.`;
+---
+
+<BaseLayout title="태그" description={description}>
+  <div class="page container">
+    <PageHeader eyebrow="Blog / Tags" title="태그" intro="주제별로 글을 모아 봅니다. 글이 많은 태그가 앞에 옵니다." />
+    {tags.length ? (
+      <ul class="tag_index" aria-label="모든 태그">
+        {tags.map(({ tag, count }) => (
+          <li>
+            <a class="tag_index_link" href={tagHref(tag)}>
+              <span class="tag_index_name">#{tag}</span>
+              <span class="tag_index_count">글 {count}개</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty_note">아직 태그가 붙은 글이 없습니다.</p>
+    )}
+    <p class="tag_index_back"><a href="/blog/">블로그 목록으로</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+
+  .tag_index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+  }
+
+  .tag_index_link {
+    align-items: center;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    gap: var(--space-3);
+    min-block-size: 44px;
+    padding: var(--space-2) var(--space-4);
+    text-decoration: none;
+  }
+
+  .tag_index_link:hover .tag_index_name {
+    color: var(--spot);
+    text-decoration: underline;
+  }
+
+  .tag_index_name {
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+
+  .tag_index_count {
+    color: var(--ink-dim);
+    font-size: var(--text-small);
+  }
+
+  .tag_index_back {
+    border-block-start: 1px solid var(--rule);
+    font-size: var(--text-small);
+    font-weight: 500;
+    margin-block-start: var(--space-12);
+    padding-block-start: var(--space-8);
+  }
+</style>

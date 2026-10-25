@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getPosts, getWorks, isoDate, postHref, workHref } from '../lib/content';
+import { countTags, getPosts, getWorks, isoDate, postHref, tagHref, workHref } from '../lib/content';
 import { escapeXml, xmlResponse } from '../lib/xml';
 
 // 공개 페이지 목록. /admin/은 noindex라 넣지 않습니다.
@@ -10,6 +10,9 @@ export const GET: APIRoute = async ({ site }) => {
     { path: '/' },
     { path: '/blog/' },
     ...posts.map((post) => ({ path: postHref(post.id), lastmod: isoDate(post.data.date) })),
+    ...(posts.some((post) => post.data.tags?.length)
+      ? [{ path: '/blog/tags/' }, ...countTags(posts).map(({ tag }) => ({ path: tagHref(tag) }))]
+      : []),
     { path: '/portfolio/' },
     ...works.map((work) => ({ path: workHref(work.id) })),
   ];
