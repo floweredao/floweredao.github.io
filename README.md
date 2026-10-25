@@ -135,6 +135,21 @@ EVENT PORTFOLIO_DEPLOYED <커밋>
 EVENT PORTFOLIO_DEPLOY_FAIL <커밋> <install|build|check:site|deploy> (로그: …/last-run.log)
 ```
 
+#### 마지막 배포 상태 확인 (저장한 글이 안 보일 때)
+
+휴대폰에서도 **https://floweredao.github.io/deploy-status.json** 을 열면 마지막 자동 배포 결과가 보입니다. 검색에는 잡히지 않게 `robots.txt`에서 막아 두었고 사이트 메뉴에도 없습니다.
+
+```json
+{ "commit": "마지막으로 처리한 main 커밋", "result": "success | failed", "failedStep": "install | build | check:site | deploy | null",
+  "finishedAt": "UTC 시각", "liveCommit": "지금 사이트에 올라가 있는 커밋" }
+```
+
+- `commit`이 GitHub `main`의 최신 커밋과 같고 `result`가 `success`면 배포는 끝났습니다. 그래도 글이 안 보이면 글의 "임시저장"이 켜져 있는지 확인합니다(브라우저 캐시도 1–2분 남을 수 있습니다).
+- `result`가 `failed`면 `failedStep` 단계에서 멈춘 것이고, 사이트는 `liveCommit` 상태 그대로입니다. 자세한 원인은 이 맥의 `last-run.log`에 있습니다. 흔한 원인은 alt가 빈 이미지(`check:site`)나 잘못된 frontmatter(`build`)입니다.
+- `commit`이 최신 커밋보다 예전이면 아직 도는 중이거나(보통 3분 안) 이 맥의 자동 배포가 꺼져 있는 것입니다.
+
+성공하면 이 파일이 빌드와 함께 올라가고, 실패하면 사이트 내용은 그대로 두고 `gh-pages`에 이 파일만 바꾼 커밋을 일반 푸시로 올립니다.
+
 실패한 커밋은 다시 시도하지 않고, 고친 커밋이 올라오면 그것을 배포합니다. 멈추려면 `launchctl bootout gui/$(id -u)/local.portfolio-autodeploy`, 다시 켜려면 `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/local.portfolio-autodeploy.plist`.
 
 ### 스크립트로 올리기

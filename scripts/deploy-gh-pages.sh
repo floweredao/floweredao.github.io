@@ -15,6 +15,8 @@ stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
 
 cp -R dist/. "$stage"
+# autodeploy.sh가 넘겨 주면 마지막 배포 결과를 /deploy-status.json으로 함께 올립니다.
+if [ -n "${DEPLOY_STATUS_FILE:-}" ]; then cp "$DEPLOY_STATUS_FILE" "$stage/deploy-status.json"; fi
 git -C "$stage" init -q -b "$branch"
 git -C "$stage" add -A
 git -C "$stage" \
