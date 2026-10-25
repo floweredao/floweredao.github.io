@@ -1,6 +1,6 @@
 ---
 import FormattedDate from './FormattedDate.astro';
-import { postHref, type Post } from '../lib/content';
+import { postHref, tagHref, type Post } from '../lib/content';
 
 interface Props {
   posts: Post[];
@@ -22,7 +22,7 @@ const Heading = headingLevel;
         <p class="post_list_desc">{post.data.description}</p>
         {post.data.tags?.length ? (
           <ul class="post_list_tags" aria-label="태그">
-            {post.data.tags.map((tag) => <li>{tag}</li>)}
+            {post.data.tags.map((tag) => <li><a class="post_list_tag" href={tagHref(tag)}>#{tag}</a></li>)}
           </ul>
         ) : null}
       </div>
@@ -85,8 +85,14 @@ const Heading = headingLevel;
     margin-block-start: var(--space-1);
   }
 
-  .post_list_tags li::before {
-    content: '#';
+  .post_list_tag {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post_list_tag:hover {
+    color: var(--ink);
+    text-decoration: underline;
   }
 
   @media (min-width: 48rem) {

@@ -13,6 +13,7 @@ const description = `${SITE_NAME}가 쓴 글의 목록입니다. 최신 글이 �
     <PageHeader eyebrow="Blog" title="블로그" intro="만든 것과 생각한 것을 글로 남깁니다. 최신 글이 위에 옵니다." />
     {posts.length ? (
       <PostList posts={posts} headingLevel="h2" />
+      <p class="blog_tags_link"><a href="/blog/tags/">태그별로 보기</a></p>
     ) : (
       <p class="empty_note">아직 올라온 글이 없습니다.</p>
     )}
@@ -22,5 +23,12 @@ const description = `${SITE_NAME}가 쓴 글의 목록입니다. 최신 글이 �
 <style>
   .page {
     padding-block-end: var(--space-20);
+  }
+
+  .blog_tags_link {
+    border-block-start: 1px solid var(--rule);
+    font-size: var(--text-small);
+    font-weight: 500;
+    padding-block-start: var(--space-8);
   }
 </style>

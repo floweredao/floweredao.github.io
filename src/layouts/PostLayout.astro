@@ -4,7 +4,7 @@ import Eyebrow from '../components/Eyebrow.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import PrevNext from '../components/PrevNext.astro';
 import TagList from '../components/TagList.astro';
-import { isoDate, postHref, SITE_NAME, type Post } from '../lib/content';
+import { isoDate, postHref, SITE_NAME, tagHref, type Post } from '../lib/content';
 
 interface Props {
   post: Post;
@@ -44,7 +44,7 @@ const structuredData = JSON.stringify({
         {tags?.length ? (
           <>
             <p class="post_aside_label">태그</p>
-            <TagList items={tags} label="태그" />
+            <TagList items={tags} label="태그" href={tagHref} />
           </>
         ) : null}
       </aside>

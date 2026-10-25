@@ -2,13 +2,15 @@
 interface Props {
   items: string[];
   label: string;
+  /** 주면 각 항목을 그 주소로 가는 링크로 만듭니다. */
+  href?: (item: string) => string;
 }
 
-const { items, label } = Astro.props;
+const { items, label, href } = Astro.props;
 ---
 
 <ul class="tag_list" aria-label={label}>
-  {items.map((item) => <li class="tag_list_item">{item}</li>)}
+  {items.map((item) => <li class="tag_list_item">{href ? <a class="tag_list_link" href={href(item)}>{item}</a> : item}</li>)}
 </ul>
 
 <style>
@@ -26,5 +28,20 @@ const { items, label } = Astro.props;
     font-size: var(--text-small);
     line-height: var(--leading-small);
     padding: var(--space-1) var(--space-3);
+  }
+
+  .tag_list_item:has(.tag_list_link) {
+    padding: 0;
+  }
+
+  .tag_list_link {
+    display: block;
+    padding: var(--space-1) var(--space-3);
+    text-decoration: none;
+  }
+
+  .tag_list_link:hover {
+    color: var(--spot);
+    text-decoration: underline;
   }
 </style>

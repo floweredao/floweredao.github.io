@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import PostList from '../../../components/PostList.astro';
+import { countTags, getPosts, SITE_NAME } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return countTags(posts).map(({ tag }) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((post) => post.data.tags?.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const description = `${SITE_NAME} 블로그에서 '${tag}' 태그가 붙은 글 ${posts.length}개입니다.`;
+---
+
+<BaseLayout title={`#${tag} 태그`} description={description}>
+  <div class="page container">
+    <PageHeader eyebrow="Blog / Tags" title={`#${tag}`} intro={`'${tag}' 태그가 붙은 글 ${posts.length}개입니다. 최신 글이 위에 옵니다.`} />
+    <PostList posts={posts} headingLevel="h2" />
+    <p class="tag_page_links">
+      <a href="/blog/tags/">모든 태그 보기</a>
+      <a href="/blog/">블로그 목록으로</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block-end: var(--space-20);
+  }
+
+  .tag_page_links {
+    border-block-start: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--text-small);
+    font-weight: 500;
+    gap: var(--space-5);
+    padding-block-start: var(--space-8);
+  }
+</style>
