@@ -61,6 +61,12 @@ for (const rel of new Bun.Glob("**/*.html").scanSync({ cwd: dist })) {
     fail(`${rel}: 관리자 페이지에 noindex 없음`);
   }
   if (!rel.startsWith("admin/") && /href="\/admin\//.test(html)) fail(`${rel}: 관리자 페이지 링크 노출`);
+  // 공개 페이지는 링크 미리보기 그림(og:image)이 있어야 하고, 그 파일이 dist에 있어야 합니다.
+  if (!rel.startsWith("admin/")) {
+    const og = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+    if (!og) fail(`${rel}: og:image 없음`);
+    else if (!resolves(new URL(og).pathname)) fail(`${rel}: og:image 파일 없음 ${og}`);
+  }
   for (const pattern of forbidden) {
     if (pattern.test(html)) fail(`${rel}: 금지된 문자열 ${pattern}`);
   }
@@ -100,4 +106,4 @@ if (failures.length > 0) {
   for (const f of failures) console.log(`FAIL ${f}`);
   process.exit(1);
 }
-console.log("PASS 필수 페이지, 내부 링크, 대체 텍스트, 비공개 문자열");
+console.log("PASS 필수 페이지, 내부 링크, og:image, 대체 텍스트, 비공개 문자열");
