@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>floweredao 블로그</title>
+    <link>https://floweredao.github.io/blog/</link>
+    <description>floweredao가 쓴 글</description>
+    <language>ko</language>
+    <atom:link href="https://floweredao.github.io/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>블로그를 준비하고 있습니다</title>
+      <link>https://floweredao.github.io/blog/hello/</link>
+      <guid isPermaLink="true">https://floweredao.github.io/blog/hello/</guid>
+      <description>글을 올릴 공간을 열어 두었습니다. 첫 글은 곧 올라옵니다.</description>
+      <pubDate>Thu, 01 Oct 2026 00:00:00 GMT</pubDate>
+      <category>공지</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /deploy-status.json
+
+Sitemap: https://floweredao.github.io/sitemap-index.xml
